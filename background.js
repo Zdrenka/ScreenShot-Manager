@@ -77,6 +77,14 @@ function saveAs(data, name) {
 }
 
 function saveImage() {
+    var image = new Image();
+    image.onload = function() {
+        var canvas = screenshot.content;
+        canvas.width = image.width;
+        canvas.height = image.height;
+        var context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0);
+    };
     sync.get(['save_as', 'save_download', 'disable_auto'], function(items) {
         if (items['save_as'] == true)
             saveAs(screenshot.data, screenshot.name);

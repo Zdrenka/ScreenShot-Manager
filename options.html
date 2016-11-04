@@ -1,0 +1,40 @@
+<html>
+<head><title>ScreenShot Manager</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+<link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+  <h1>ScreenShot Manager</h1>
+  <div class="container">
+    <div class="side-container">
+      <div class="side-bar">
+          <div class="checks">
+            <label for="disable_auto">Disable Auto Save:</label>
+            <input style="float: right;" type="checkbox" value="None" id="disable_auto" name="check" />
+          </div>
+          <p>Don't want to download the screenshot everytime? Check here to save to options screen only.</p>
+      </div>
+        <div class="side-bar">
+          <div class="checks">
+            <label for="save_as">Save As:</label>
+            <input style="float: right;" type="checkbox" value="None" id="save_as" name="check" />
+          </div>
+          <p>Open a Save As dialog and choose the file name and where to save your file.</p>
+        </div>
+        <div class="side-bar">
+          <div class="checks">
+            <label for="save_as">Mute:</label>
+            <input style="float: right;" type="checkbox" value="None" id="mute" name="check" />
+          </div>
+          <p>Mute that annoying camera sound!</p>
+        </div>
+    </div>
+      <div id="shots" class="shots-container">
+      </div>
+    </div>
+</div>
+<script src="jquery-3.1.1.min.js"></script>
+<script src="options.js"></script>
+</body>
+</html>

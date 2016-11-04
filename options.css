@@ -1,0 +1,137 @@
+body {
+    background-color: #b6eff9;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 10px;
+}
+
+#share-buttons img {
+width: 35px;
+padding: 5px;
+border: 0;
+box-shadow: 0;
+display: inline;
+}
+
+.screen-shots {
+    border-radius: 2.5px;
+    width: 304px;
+    height: 180px;
+}
+.side-bar {
+  float:left;
+  background-color: #FFFFFF;;
+  clear:both;
+  padding: 10px;
+  border-radius: 2.5px;
+  width: 90%;
+  margin-bottom: 10px;
+  box-shadow: 0px 1px 4px 0px rgba(85, 98, 112, 0.5);
+}
+.side-container {
+  float:left;
+  width: 250px;
+  height: 100%;
+  margin-right: 10px;
+}
+.checks {
+  font-size: large;
+}
+.shots-container {
+}
+
+.shots {
+    background-color: #FFFFFF;
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+}
+.shots .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    color: #FFF;
+}
+.shots:hover .overlay {
+    display: block;
+    background: rgba(0, 0, 0, 0.1);
+    margin-right: 0px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 200px;
+}
+
+.delete-button .download-button {
+color: red;
+}
+
+.download-button {
+    border: none;
+    color: white;
+    background-color: grey;
+    padding: 10px 10px;
+    border-radius: 100px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 26px;
+    margin: 4px 2px;
+    margin-top: 60px;
+    cursor: pointer;
+}
+.effect2
+{
+  position: relative;
+}
+.effect2:before, .effect2:after
+{
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: #777;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+.effect2:after
+{
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+
+
+/* Grow Shadow
+.hvr-grow-shadow {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: box-shadow, transform;
+  transition-property: box-shadow, transform;
+}
+.hvr-grow-shadow:hover, .hvr-grow-shadow:focus, .hvr-grow-shadow:active {
+  box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}*/

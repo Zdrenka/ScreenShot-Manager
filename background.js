@@ -46,13 +46,16 @@ function cameraEffect() {
 
     });
 
-    chrome.tabs.executeScript(null, {
-        file: "jquery-3.1.1.min.js"
-    }, function() {
+    //Cannot insert code into chrome:// pages
+    if (location.protocol != "chrome-extension:") {
         chrome.tabs.executeScript(null, {
-            file: "overlay.js"
+            file: "jquery-3.1.1.min.js"
+        }, function() {
+            chrome.tabs.executeScript(null, {
+                file: "overlay.js"
+            });
         });
-    });
+    }
 }
 
 function playAudio() {

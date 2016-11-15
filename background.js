@@ -1,9 +1,7 @@
-var counter = 1;
 var local = chrome.storage.local;
 var sync = chrome.storage.sync;
 var image_data = {};
 var images_objects = {};
-
 var screenshot = {
     content: document.createElement("canvas"),
     data: '',
@@ -12,29 +10,52 @@ var screenshot = {
 chrome.browserAction.onClicked.addListener(
     function(request, sender, sendResponse) {
         //flash! ahh ahhhh!
-        cameraEffect();
+        cameraEffect(request);
         chrome.tabs.captureVisibleTab(null, {
             format: "png"
         }, function(data) {
             screenshot.name = request.title + ".png";
             screenshot.data = data;
             saveImage();
-            if (counter >= 13) {
-                counter = 1;
-            }
-            image_data = {
-                image: data,
-                number: counter,
-                name: request.title
-            };
-            images_objects[counter] = image_data;
-            local.set(images_objects);
-            images_objects = {};
-            counter++;
+            pushImage();
         });
     });
 
-function cameraEffect() {
+
+function pushImage() {
+    sync.get("counter", function(data) {
+        image_data = {
+            image: screenshot.data,
+            number: data['counter'],
+            name: screenshot.name
+        };
+        if (image_data.number == null) {
+            image_data.number = 1;
+        }
+        setCounter(image_data.number);
+        images_objects[image_data.number] = image_data;
+        local.set(images_objects);
+        images_objects = {};
+    });
+}
+
+function setCounter(counter) {
+    if (counter == null) {
+        sync.set({
+            'counter': 1
+        }, function() {});
+    } else {
+        if (counter >= 12) {
+            counter = 0;
+        }
+        sync.set({
+            'counter': counter + 1
+        }, function() {});
+    }
+}
+
+
+function cameraEffect(tab) {
     sync.get(['mute'], function(items) {
         if (!jQuery.isEmptyObject(items)) {
             if (items['mute'] == false) {
@@ -46,15 +67,27 @@ function cameraEffect() {
 
     });
 
-    //Cannot insert code into chrome:// pages
-    chrome.tabs.executeScript(null, {
-        file: "jquery-3.1.1.min.js"
-    }, function() {
+    if (tab.url.indexOf("chrome") == -1) {
         chrome.tabs.executeScript(null, {
-            file: "overlay.js"
+            file: "jquery-3.1.1.min.js",
+            allFrames: true,
+            matchAboutBlank: true
+        }, function() {
+            if (chrome.runtime.error) {
+                //  console.log("Runtime error.");
+            } else {
+                chrome.tabs.executeScript(null, {
+                    file: "overlay.js",
+                    allFrames: true,
+                    matchAboutBlank: true
+                }, function() {
+                    if (chrome.runtime.error) {
+                        console.log("Runtime error.");
+                    }
+                });
+            }
         });
-    });
-
+    }
 }
 
 function playAudio() {
@@ -66,7 +99,8 @@ function playAudio() {
 function download(data, name) {
     chrome.downloads.download({
         url: screenshot.data,
-        filename: screenshot.name
+        filename: screenshot.name,
+        saveAs: false
     });
 }
 

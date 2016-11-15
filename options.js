@@ -46,7 +46,18 @@ function remove(id) {
             $("#p" + id + "container").empty();
             console.log("removed");
         });
-    } else {}
+        chrome.storage.sync.get("counter", function(object) {
+            var count = object["counter"];
+            chrome.storage.sync.set({
+                    "counter": count - 1
+                },
+                function() {
+                    if (chrome.runtime.error) {
+                        console.log("Runtime error.");
+                    }
+                });
+        });
+    }
 }
 
 //gets and sets
@@ -75,6 +86,10 @@ function populateImage(id, title, num) {
         document.getElementById(id + "remove").addEventListener("click", function() {
             remove(num.toString());
 
+        });
+    } else {
+        chrome.storage.local.remove(id, function(items) {
+            console.log("removed");
         });
     }
 }

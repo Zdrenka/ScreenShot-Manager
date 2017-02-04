@@ -7,28 +7,26 @@ function refresh() {
         for (key in data) {
             $("#" + key).attr("checked", data[key]);
         }
+        console.log("found sync data");
     });
 
-    chrome.storage.local.get(null, function(keys) {
-        if (!jQuery.isEmptyObject(keys)) {
-            manageLocalData(keys);
+    chrome.storage.local.get(null, function(images) {
+        for (var i in images.imgs) {
+            var shot = images.imgs[i];
+            populateImage(i, shot);
+            $("#p" + i).attr("src", shot.data);
         }
     });
 }
 
-function manageLocalData(keys) {
-    var item;
-    for (var id in keys) {
-        if (keys[id].newValue != null)
-            item = keys[id].newValue;
-        else if (keys[id].oldValue != null)
-            item = keys[id].oldValue;
-        else
-            item = keys[id];
-
-        var id = "p" + item.number;
-        populateImage(id, item.name, item.number);
-        $("#" + id).attr("src", item.image);
+//currently reloads all images - change so only missing images are loaded
+function manageLocalData(shots) {
+    if (shots.imgs.newValue != null) {
+        for (var i in shots.imgs.newValue) {
+            var shot = shots.imgs.newValue[i];
+            populateImage(i, shot);
+            $("#p" + i).attr("src", shot.data);
+        }
     }
 }
 
@@ -40,22 +38,28 @@ function reDownload(id) {
     });
 }
 
+function notifyBackground(event, data) {
+    var port = chrome.extension.connect({
+        name: event
+    });
+    port.postMessage(data);
+}
+
 function remove(id) {
     if (confirm('Are you sure you want to delete this schreenshot?')) {
-        chrome.storage.local.remove(id, function(items) {
-            $("#p" + id + "container").empty();
-            console.log("removed");
-        });
-        chrome.storage.sync.get("counter", function(object) {
-            var count = object["counter"];
-            chrome.storage.sync.set({
-                    "counter": count - 1
-                },
-                function() {
-                    if (chrome.runtime.error) {
-                        console.log("Runtime error.");
-                    }
+        chrome.storage.local.get(null, function(images) {
+            images.imgs.splice(id, 1);
+            chrome.storage.local.set(images, function() {
+                $("#p" + id + "container").addClass("animated hinge");
+                $("#p" + id + "container").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(e) {
+                    alert("finish");
+                    $("#p" + id + "container").remove();
                 });
+
+                console.log("removed");
+                notifyBackground("splice", id);
+                location.reload();
+            });
         });
     }
 }
@@ -67,25 +71,24 @@ chrome.storage.onChanged.addListener(function(key, namespace) {
     }
 });
 
-function populateImage(id, title, num) {
+function populateImage(index, shot) {
+    var id = ('p' + index);
     if ($('#' + id).length == 0) {
-        $("#shots").append("<div id='" + id + "container' style='float:left;'><div class='shots effect2'> " +
-            "<img id='" + id + "' alt= '" + title + "' title='" + num + "' class='screen-shots img-thumbnail' >" +
-            "<div class='overlay'>" +
-            "<button id='" + id + "download' title='download' class='download-button material-icons'>file_download</button>" +
-            "<button id='" + id + "remove' title='delete forever?!' class='download-button material-icons'>delete_forever</button>" +
+        $("#shots").append("<div id='" + id + "container' style='float:left;'><div class='shots'> " +
+            "<img id='" + id + "' alt= '" + shot.name + "' title='" + shot.name + "' class='screen-shots img-thumbnail' >" +
+            "<div class='overlay animated fadei'>" +
+            "<button id='" + id + "download' title='Download Image'   class='download-button material-icons'>file_download</button>" +
+            "<button id='" + id + "remove'   title='delete forever?!' class='download-button material-icons'>delete_forever</button>" +
             "</div>" +
-            "<p style='text-align: center'>" + new Date().toLocaleString() + "</p>" +
+            "<p style='text-align: center'>" + shot.timestamp + "</p>" +
             "</div>" +
             "</div>");
 
         document.getElementById(id + "download").addEventListener("click", function() {
             reDownload(id);
         });
-
         document.getElementById(id + "remove").addEventListener("click", function() {
-            remove(num.toString());
-
+            remove(index.toString());
         });
     } else {
         chrome.storage.local.remove(id, function(items) {

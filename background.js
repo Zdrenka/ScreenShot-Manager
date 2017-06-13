@@ -38,10 +38,28 @@ chrome.browserAction.onClicked.addListener(
         }, function(data) {
             var shot = new Shot(request.title + ".jpg", data);
             shot.save();
-            shots[shots.length] = shot;
-            push(); //push it real good!
+            addToCollection(shot)
         });
     });
+
+function addToCollection(shot) {
+    local.get(null, function(images) {
+        if (images.imgs == null) {
+            shots[0] = shot;
+        } else {
+            shots[images.imgs.length] = shot;
+        }
+        push();
+    });
+}
+
+function push() {
+    local.set({
+        imgs: shots
+    }, function() {
+        console.log("image collection added to local storage");
+    });
+}
 
 function cameraEffect(tab) {
     sync.get(['mute'], function(items) {
@@ -89,14 +107,6 @@ chrome.extension.onConnect.addListener(function(port) {
         }
     });
 });
-
-function push() {
-    local.set({
-        imgs: shots
-    }, function() {
-        console.log("image collection added to local storage");
-    });
-}
 
 function playAudio() {
     var myAudio = new Audio();

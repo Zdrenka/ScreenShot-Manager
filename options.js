@@ -19,22 +19,14 @@ function refresh() {
     });
 }
 
-//currently reloads all images - change so only missing images are loaded
-function manageLocalData(shots) {
-    if (shots.imgs.newValue != null) {
-        for (var i in shots.imgs.newValue) {
-            var shot = shots.imgs.newValue[i];
-            populateImage(i, shot);
-            $("#p" + i).attr("src", shot.data);
-        }
-    }
-}
-
 function reDownload(id) {
-    chrome.downloads.download({
-        url: $('#' + id).attr('src'),
-        filename: id + ".png",
-        saveAs: true
+    chrome.storage.local.get(null, function(images) {
+        var shot = images.imgs[id];
+        chrome.downloads.download({
+            url: shot.data,
+            filename: shot.name,
+            saveAs: true
+        });
     });
 }
 
@@ -50,12 +42,7 @@ function remove(id) {
         chrome.storage.local.get(null, function(images) {
             images.imgs.splice(id, 1);
             chrome.storage.local.set(images, function() {
-                $("#p" + id + "container").addClass("animated hinge");
-                $("#p" + id + "container").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(e) {
-                    alert("finish");
-                    $("#p" + id + "container").remove();
-                });
-
+                $("#p" + id + "container").remove();
                 console.log("removed");
                 notifyBackground("splice", id);
                 location.reload();
@@ -67,14 +54,14 @@ function remove(id) {
 //gets and sets
 chrome.storage.onChanged.addListener(function(key, namespace) {
     if (namespace == "local") {
-        manageLocalData(key);
+        refresh();
     }
 });
 
 function populateImage(index, shot) {
     var id = ('p' + index);
-    if ($('#' + id).length == 0) {
-        $("#shots").append("<div id='" + id + "container' style='float:left;'><div class='shots'> " +
+    if ($("#" + id + "container").length == 0) {
+        $("#shots").append("<div id='" + id + "container' style='float:left;'><div class='shots effect2'> " +
             "<img id='" + id + "' alt= '" + shot.name + "' title='" + shot.name + "' class='screen-shots img-thumbnail' >" +
             "<div class='overlay animated fadei'>" +
             "<button id='" + id + "download' title='Download Image'   class='download-button material-icons'>file_download</button>" +
@@ -85,14 +72,10 @@ function populateImage(index, shot) {
             "</div>");
 
         document.getElementById(id + "download").addEventListener("click", function() {
-            reDownload(id);
+            reDownload(index);
         });
         document.getElementById(id + "remove").addEventListener("click", function() {
             remove(index.toString());
-        });
-    } else {
-        chrome.storage.local.remove(id, function(items) {
-            console.log("removed");
         });
     }
 }

@@ -47,6 +47,7 @@ function addToCollection(shot) {
         if (images.imgs == null) {
             shots[0] = shot;
         } else {
+            shots = images.imgs;
             shots[images.imgs.length] = shot;
         }
         push();

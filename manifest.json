@@ -1,6 +1,6 @@
 {
   "name": "ScreenShot Manager",
-  "version": "1.0",
+  "version": "1.7",
   "description": "Take screenshots and store them in local memory. Download them automatically or download them at a later date. Store up to 12 screenshots",
   "options_page": "options.html",
   "background": {

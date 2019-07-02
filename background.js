@@ -3,7 +3,7 @@ var sync = chrome.storage.sync;
 var shots = [];
 
 function Shot(name, data) {
-    this.name = name;
+    this.name = name.replace(/[^\w\s.]/gi, '');
     this.data = data;
     this.timestamp = new Date().toLocaleString();
     this.save = function() {

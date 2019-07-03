@@ -51,6 +51,37 @@ function remove(id) {
     }
 }
 
+function expand(id) {
+    var modal = document.getElementById("myModal");
+    var modalImg = document.getElementById("img01");
+    var caption = document.getElementById("caption");
+    modal.style.display = "block";
+
+    chrome.storage.local.get(null, function (images) {
+        var shot = images.imgs[id];
+        modalImg.src = shot.data;
+        caption.innerHTML = shot.name;
+    });
+    var download = document.getElementsByClassName("download")[0];
+    var del = document.getElementsByClassName("delete")[0];
+
+    del.onclick = function () {
+        remove(id);
+    }
+
+    download.onclick = function () {
+        reDownload(id);
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+}
+
 //gets and sets
 chrome.storage.onChanged.addListener(function(key, namespace) {
     if (namespace == "local") {
@@ -66,6 +97,7 @@ function populateImage(index, shot) {
             "<div class='overlay animated fadei'>" +
             "<button id='" + id + "download' title='Download Image'   class='download-button material-icons'>file_download</button>" +
             "<button id='" + id + "remove'   title='delete forever?!' class='download-button material-icons'>delete_forever</button>" +
+            "<button id='" + id + "expand'   title='View image' class='download-button material-icons'>fullscreen</button>" +
             "</div>" +
             "<p style='text-align: center'>" + shot.timestamp + "</p>" +
             "</div>" +
@@ -76,6 +108,9 @@ function populateImage(index, shot) {
         });
         document.getElementById(id + "remove").addEventListener("click", function() {
             remove(index.toString());
+        });
+        document.getElementById(id + "expand").addEventListener("click", function () {
+            expand(index);
         });
     }
 }

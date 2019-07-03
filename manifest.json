@@ -1,6 +1,6 @@
 {
   "name": "ScreenShot Manager",
-  "version": "1.8",
+  "version": "1.9",
   "description": "Take screenshots and store them in local memory. Download them automatically or at a later date.",
   "options_page": "options.html",
   "background": {

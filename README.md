@@ -7,3 +7,4 @@ Take screenshots and store them in local memory. Download them automatically or 
 ![Alt text](http://i.imgur.com/OAKy0Gl.png "Example")
 
 Automatically save the shot to the downloads folder, or set the location yourself. Or download the image at a later date. Each image is saved with a timestamp
+

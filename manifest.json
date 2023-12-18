@@ -2,20 +2,39 @@
   "name": "ScreenShot Manager",
   "version": "1.9",
   "description": "Take screenshots and store them in local memory. Download them automatically or at a later date.",
-  "options_page": "options.html",
-  "background": {
-    "persistent": false,
-    "scripts": ["jquery-3.1.1.min.js", "background.js"]
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   },
-  "icons": { "16": "camera16.png",
-           "48": "camera48.png",
-          "128": "camera128.png" },
-  "browser_action": {
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "camera16.png",
+    "48": "camera48.png",
+    "128": "camera128.png"
+  },
+  "action": {
     "default_icon": "camera16.png",
     "default_title": "Shoot!"
   },
   "permissions": [
-    "tabs","<all_urls>", "activeTab", "downloads", "storage"
+    "tabs", "activeTab", "downloads", "storage"
   ],
-  "manifest_version": 2
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["cam.mp3"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "manifest_version": 3
 }

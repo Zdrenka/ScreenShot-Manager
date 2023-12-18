@@ -1,18 +1,18 @@
 document.body.onload = function() {
     refresh();
-}
+};
 
 function refresh() {
     chrome.storage.sync.get(function(data) {
-        for (key in data) {
-            $("#" + key).attr("checked", data[key]);
+        for (let key in data) {
+            $("#" + key).prop("checked", data[key]);
         }
-        console.log("found sync data");
+        console.log("Found sync data");
     });
 
     chrome.storage.local.get(null, function(images) {
-        for (var i in images.imgs) {
-            var shot = images.imgs[i];
+        for (let i in images.imgs) {
+            let shot = images.imgs[i];
             populateImage(i, shot);
             $("#p" + i).attr("src", shot.data);
         }
@@ -21,7 +21,7 @@ function refresh() {
 
 function reDownload(id) {
     chrome.storage.local.get(null, function(images) {
-        var shot = images.imgs[id];
+        let shot = images.imgs[id];
         chrome.downloads.download({
             url: shot.data,
             filename: shot.name,
@@ -31,19 +31,16 @@ function reDownload(id) {
 }
 
 function notifyBackground(event, data) {
-    var port = chrome.extension.connect({
-        name: event
-    });
-    port.postMessage(data);
+    chrome.runtime.sendMessage({ event: event, data: data });
 }
 
 function remove(id) {
-    if (confirm('Are you sure you want to delete this schreenshot?')) {
+    if (confirm('Are you sure you want to delete this screenshot?')) {
         chrome.storage.local.get(null, function(images) {
             images.imgs.splice(id, 1);
             chrome.storage.local.set(images, function() {
                 $("#p" + id + "container").remove();
-                console.log("removed");
+                console.log("Removed");
                 notifyBackground("splice", id);
                 location.reload();
             });
@@ -115,40 +112,25 @@ function populateImage(index, shot) {
     }
 }
 
-//set to auto download to download folder
-document.getElementById("disable_auto").onclick = function() {
-    var sa = document.getElementById('save_as').checked = false;
-    var da = document.getElementById('disable_auto').checked;
-    chrome.storage.sync.set({
-        "save_as": sa,
-        "disable_auto": da
-    }, function() {
-        if (chrome.runtime.error) {
-            console.log("Runtime error.");
-        }
-    });
-}
+document.getElementById("disable_auto").addEventListener("click", function() {
+    setOption('disable_auto');
+});
 
-//set to define download directory and filename
-document.getElementById("save_as").onclick = function() {
-    var da = document.getElementById('disable_auto').checked = false;
-    var sa = document.getElementById('save_as').checked;
-    chrome.storage.sync.set({
-        "save_as": sa,
-        "disable_auto": da
-    }, function() {
-        if (chrome.runtime.error) {
-            console.log("Runtime error.");
-        }
-    });
-}
+document.getElementById("save_as").addEventListener("click", function() {
+    setOption('save_as');
+});
 
-document.getElementById("mute").onclick = function() {
-    var m = document.getElementById('mute').checked;
-    chrome.storage.sync.set({
-        "mute": m
-    }, function() {
-        if (chrome.runtime.error) {
+document.getElementById("mute").addEventListener("click", function() {
+    setOption('mute');
+});
+
+function setOption(optionId) {
+    let isChecked = document.getElementById(optionId).checked;
+    let options = { "disable_auto": false, "save_as": false, "mute": false };
+    options[optionId] = isChecked;
+    
+    chrome.storage.sync.set(options, function() {
+        if (chrome.runtime.lastError) {
             console.log("Runtime error.");
         }
     });

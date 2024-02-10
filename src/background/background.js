@@ -91,6 +91,8 @@ function captureAndSaveShot(tabId) {
             const shot = new Shot(tab.title + ".jpg", data);
             //shot.save();
             screenshotManagerDB.addToCollection(shot);
+            console.log("call load shots!")
+            chrome.runtime.sendMessage({ action: "loadShots" });
         });
     });
 }

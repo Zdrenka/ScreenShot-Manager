@@ -2,106 +2,67 @@
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
     <div class="shots-gallery">
-      <Galleria
-        v-model:activeIndex="activeIndex"
-        v-model:visible="displayCustom"
-        :value="shots"
-        :responsiveOptions="responsiveOptions"
-        :numVisible="7"
-        containerStyle="max-width: 850px"
-        :circular="true"
-        :fullScreen="true"
-        :showItemNavigators="true"
-        :showThumbnails="false"
-      >
-        <template #item="slotProps">
-          <img
-            :src="slotProps.item.data"
-            :alt="slotProps.item.name"
-            style="width: 100%; display: block"
-          />
-        </template>
-        <template #thumbnail="slotProps">
-          <img
-            :src="slotProps.item.data"
-            :alt="slotProps.item.name"
-            style="width: 100%; display: block"
-          />
-        </template>
-      </Galleria>
-      <div v-if="shots" class="grid" style="max-width: 400px">
-        <div v-for="(image, index) of shots" :key="index" class="col-4">
-          <img
-            :src="image.data"
-            :alt="image.name"
-            style="cursor: pointer"
-            @click="imageClick(index)"
-            width="250"
-          />
-        </div>
-      </div>
-      <!-- 
-      <Galleria v-model:activeIndex="activeIndex" v-model:visible="displayCustom" :value="images" :responsiveOptions="responsiveOptions" :numVisible="7"
-    containerStyle="max-width: 850px" :circular="true" :fullScreen="true" :showItemNavigators="true" :showThumbnails="false">
-    <template #item="slotProps">
-        <img :src="slotProps.item.itemImageSrc" :alt="slotProps.item.alt" style="width: 100%; display: block" />
-    </template>
-    <template #thumbnail="slotProps">
-        <img :src="slotProps.item.thumbnailImageSrc" :alt="slotProps.item.alt" style="display: block" />
-    </template>
-</Galleria> -->
-
-      <!-- <div style="width: 25em" v-for="shot in shots" :key="shot.name"> -->
-      <!-- <img
-            alt="{{shot.name}}"
-            style="width: -webkit-fill-available"
-            :src="shot.data"
-            :alt="shot.name"
-          /> -->
-      <!-- <Image alt="Image" width="250" preview>
-          <template #indicatoricon>
-            <i class="pi pi-search"></i>
-          </template>
-          <template #image>
-            <img :src="shot.data" :alt="shot.name" />
-          </template>
-          <template #preview="slotProps">
+      <div class="card flex justify-content-center">
+        <Galleria
+          v-model:activeIndex="activeIndex"
+          v-model:visible="displayCustom"
+          :value="shots"
+          :responsiveOptions="responsiveOptions"
+          :numVisible="7"
+          containerStyle="max-width: 850px"
+          :circular="true"
+          :fullScreen="true"
+          :showItemNavigators="true"
+          :showThumbnails="false"
+        >
+          <template #item="slotProps">
             <img
-              :src="shot.data"
-              :alt="shot.name"
-              :style="slotProps.style"
-              @click="slotProps.onClick"
+              :src="slotProps.item.data"
+              :alt="slotProps.item.name"
+              style="width: 100%; display: block"
+              class="border-round shadow-4"
             />
           </template>
-        </Image> -->
-      <!-- <div class="wrapper">
-          <Image :src="shot.data" :alt="shot.name" width="200" preview />
-        </div> -->
-      <!-- <Button icon="pi pi-check" label="Save" />
-          <Button
-            icon="pi pi-times"
-            label="Cancel"
-            severity="secondary"
-            style="margin-left: 0.5em"
-          /> -->
-      <!-- <div class="flex gap-3 mt-1">
-          <Button
-            label="Cancel"
-            severity="secondary"
-            outlined
-            class="w-full"
-            icon="pi pi-check"
-          />
-          <Button label="Save" class="w-full" icon="pi pi-times" /> -->
-      <!-- </div>
-      </div> -->
+          <template #thumbnail="slotProps">
+            <img
+              :src="slotProps.item.data"
+              :alt="slotProps.item.name"
+              style="width: 100%; display: block"
+              class="border-round shadow-4"
+            />
+          </template>
+          <template #caption="slotProps">
+            <div class="text-xl mb-2 font-bold">{{ slotProps.item.name }}</div>
+            <p class="text-white">{{ slotProps.item.date }}</p>
+          </template>
+        </Galleria>
+
+        <div v-if="shots" class="grid">
+          <div v-for="(image, index) of shots" :key="index" class="col-4">
+            <Card style="width: 25rem; overflow: hidden" unstyled>
+              <template #header>
+                <img
+                  :src="image.data"
+                  :alt="image.name"
+                  style="cursor: pointer"
+                  @click="imageClick(index)"
+                  width="350"
+                  class="border-round shadow-4"
+                />
+              </template>
+              <template #title>{{ image.name }}</template>
+              <template #subtitle>{{ image.date }}</template>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import Image from "primevue/image";
+import Card from "primevue/card";
 import Galleria from "primevue/galleria";
 import { ScreenshotManagerDB } from "../db/screenshot-manager-db.js";
 const props = defineProps({
@@ -135,7 +96,10 @@ const imageClick = (index) => {
 const screenshotManagerDB = new ScreenshotManagerDB();
 
 onMounted(async () => {
-  // Load shots
+  loadShots();
+});
+
+async function loadShots() {
   try {
     await screenshotManagerDB.getAllShots((items) => {
       shots.value = items.map(
@@ -144,6 +108,13 @@ onMounted(async () => {
     });
   } catch (error) {
     console.error("Error fetching shots:", error);
+  }
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "loadShots") {
+    console.log("Loading shots...");
+    loadShots();
   }
 });
 
@@ -172,6 +143,14 @@ class Shot {
   padding: 10px;
   text-align: center;
   box-sizing: border-box; /* Include padding and border in the width calculation */
+}
+
+.card {
+  /* background: var(--surface-card); */
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .wrapper .p-image-preview {

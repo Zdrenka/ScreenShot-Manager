@@ -1,5 +1,4 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message);
     if (message.action === "triggerCameraEffect") {
         if (document.getElementById('temp_overlay') === null) {
             let overlay = document.createElement("div");

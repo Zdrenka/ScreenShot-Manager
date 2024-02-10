@@ -1,0 +1,20 @@
+{
+  "name": "screenshot-manager",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node ./utils/updateManifest.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "primeicons": "^6.0.1",
+    "primevue": "^3.44.0",
+    "vue": "^3.3.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "vite": "^5.0.10"
+  }
+}

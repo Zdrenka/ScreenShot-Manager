@@ -1,11 +1,11 @@
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
+import Manager from "./components/Manager.vue";
 </script>
 
 <template>
   <header>
     <div class="wrapper">
-      <HelloWorld />
+      <Manager />
     </div>
   </header>
 

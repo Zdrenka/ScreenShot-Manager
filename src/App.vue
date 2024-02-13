@@ -1,11 +1,11 @@
 <script setup>
-import Manager from "./components/Manager.vue";
+import AppLayout from "./layout/AppLayout.vue";
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <Manager />
+    <div>
+      <AppLayout />
     </div>
   </header>
 

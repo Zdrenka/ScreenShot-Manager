@@ -4,31 +4,40 @@
   "description": "Take screenshots and store them in local memory. Download them automatically or at a later date.",
   "background": {
     "service_worker": "background.js",
-    "type": "module" 
+    "type": "module"
   },
   "options_ui": {
     "page": "index.html",
     "open_in_tab": true
   },
   "icons": {
-    "16": "camera16.png",
-    "48": "camera48.png",
-    "128": "camera128.png"
+    "16": "logo-16.png",
+    "32": "logo-32.png",
+    "48": "logo-48.png",
+    "128": "logo-128.png"
   },
   "action": {
-    "default_icon": "camera16.png",
+    "default_icon": "logo.png",
     "default_title": "Shoot!"
   },
   "permissions": [
-    "tabs", "activeTab", "downloads", "storage", "webRequest"
+    "tabs",
+    "activeTab",
+    "downloads",
+    "storage",
+    "webRequest"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "web_accessible_resources": [
     {
-      "resources": ["cam.mp3"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "cam.mp3"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "manifest_version": 3
